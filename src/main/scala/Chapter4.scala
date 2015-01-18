@@ -43,20 +43,17 @@ object Chapter4 {
     override def filter(f: (Nothing) => Boolean): Option[Nothing] = this
   }
 
-  // 4.2 - Seemed to be minimal gain to using Option here, unless the xs were a Seq[Option[Double]] instead.
-  def total(xs: Seq[Option[Double]]): Option[Double] = xs.fold(Some(.0): Option[Double])((a, b) => a.flatMap((v) => b.map((w) => v + w)))
+  // 4.2
+  def _total(xs: Seq[Double]): Option[Double] = xs.foldLeft(Some(.0): Option[Double])((b, a) => b.map((w) => a + w)))
 
-  def _size(xs: Seq[Option[Double]]): Option[Int] = if (xs.isEmpty) None else Some(xs.size)
+  def _size(xs: Seq[Double]): Option[Int] = if (xs.isEmpty) None else Some(xs.size)
 
-  def _mean(xs: Seq[Option[Double]]): Option[Double] = {
-    total(xs).flatMap((a) => _size(xs).map((s) => a / s))
+  def _mean(xs: Seq[Double]): Option[Double] = {
+    _total(xs).flatMap((a) => _size(xs).map((s) => a / s))
   }
 
-  def variance(xs: Seq[Option[Double]]): Option[Double] = {
-    val size: Option[Int] = _size(xs)
-    val mean: Option[Double] = _mean(xs)
-    val individual: Seq[Option[Double]] = xs map ((x) => x.flatMap((x) => size.flatMap((s) => mean.map((m) => math.pow(x - m, 2) / s))))
-    individual.fold(Some(.0))((a, b) => a.flatMap((v) => b.map((w) => v + w)))
+  def variance(xs: Seq[Double]): Option[Double] = {
+    _mean(xs) flatMap ((m) => _mean(xs.map((x) => math.pow(x - m, 2))))
   }
 
   // 4.3
