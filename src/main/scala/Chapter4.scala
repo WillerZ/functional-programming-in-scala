@@ -44,7 +44,7 @@ object Chapter4 {
   }
 
   // 4.2
-  def _total(xs: Seq[Double]): Option[Double] = xs.foldLeft(Some(.0): Option[Double])((b, a) => b.map((w) => a + w)))
+  def _total(xs: Seq[Double]): Option[Double] = xs.foldLeft(Some(.0): Option[Double])((b, a) => b.map((w) => a + w))
 
   def _size(xs: Seq[Double]): Option[Int] = if (xs.isEmpty) None else Some(xs.size)
 
