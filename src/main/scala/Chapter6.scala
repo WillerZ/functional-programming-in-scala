@@ -32,10 +32,10 @@ object Chapter6 {
 
     def map2[B, C](rb: State[S, B])(f: (A, B) => C): State[S, C] = flatMap(a => rb.flatMap(b => State.unit(f(a, b))))
 
-    def flatMap[B](g: A => State[S, B]): State[S, B] = {
-      val (a, r1) = run(_)
-      State(g(a).run)
-    }
+    def flatMap[B](g: A => State[S, B]): State[S, B] = State((s: S) => {
+      val (a, s2) = run(s)
+      g(a).run(s2)
+    })
 
     def get[S]: State[S, S] = State(s => (s, s))
 
@@ -120,11 +120,8 @@ object Chapter6 {
     }
   }
 
-  def simulateMachine(is: List[Input]): State[Machine, (Int, Int)] = State(m => is.foldLeft(((0, 0), m))((l, i) => {
-    val ((ca1, co1), s) = l
-    s(i) match {
-      case o => ((ca1 + o.candies - s.candies, co1 + o.coins - s.coins), o)
-    }
+  def simulateMachine(is: List[Input]): State[Machine, (Int, Int)] = State[Machine, (Int, Int)](m => {
+    val m2 = is.foldLeft(m)((s, i) => s(i))
+    ((m2.coins, m2.candies), m2)
   })
-  )
 }
